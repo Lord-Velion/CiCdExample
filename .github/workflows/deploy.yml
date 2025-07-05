@@ -1,0 +1,21 @@
+name: Auto-Deploy via SSH
+
+on:
+  push:
+    branches: [ "main" ]  # Или master, если у вас старая ветка
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull and restart via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}  # Можно через Secrets
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/Java/CiCdExample  # Например, ~/app
+            git pull origin main
+            docker-compose down && docker-compose up --build -d
+            echo "Deployed successfully!"
