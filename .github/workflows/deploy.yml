@@ -17,5 +17,6 @@ jobs:
           script: |
             cd ~/Java/CiCdExample  # Например, ~/app
             git pull origin main
-            docker-compose down && docker-compose up --build -d
+            mvn clean package
+            java -jar target/CiCdExample-1.0-SNAPSHOT.jar
             echo "Deployed successfully!"
