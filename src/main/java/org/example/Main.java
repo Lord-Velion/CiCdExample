@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args) {
         String fileName = "output.txt";
-        String content = "Хуйло\n";
+        String content = "Добро\n";
 
         try {
             // Получаем путь к корню проекта
