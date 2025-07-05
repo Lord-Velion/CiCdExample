@@ -1,20 +1,23 @@
 FROM maven:3.9-amazoncorretto-17 AS build
 
-# Настройки Maven
-COPY settings.xml /root/.m2/settings.xml
-ENV MAVEN_OPTS="-Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120"
+# Копируем настройки Maven (если используются)
+# COPY settings.xml /root/.m2/
 
-# Рабочая директория
+# Настройки сети для Maven
+ENV MAVEN_OPTS="-Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=25 -Dmaven.wagon.http.readTimeout=300000"
+
 WORKDIR /app
 COPY pom.xml .
 
-# Скачивание зависимостей
-RUN mvn dependency:purge-local-repository -DactTransitively=false -DreResolve=false && \
-    mvn dependency:resolve-plugins dependency:resolve -B
+# Шаг 1: Проверка POM
+RUN mvn -B help:effective-pom
 
-# Сборка приложения
+# Шаг 2: Загрузка зависимостей
+RUN mvn -B dependency:resolve
+
+# Шаг 3: Копирование кода и сборка
 COPY src ./src
-RUN mvn clean package -DskipTests -B
+RUN mvn -B clean package -DskipTests
 
 # Финальный образ
 FROM amazoncorretto:17
