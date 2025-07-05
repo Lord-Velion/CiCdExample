@@ -1,7 +1,7 @@
 FROM maven:3.9-amazoncorretto-17 AS build
 
 # Копируем настройки Maven (если используются)
-# COPY settings.xml /root/.m2/
+COPY settings.xml /root/.m2/
 
 # Настройки сети для Maven
 ENV MAVEN_OPTS="-Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=25 -Dmaven.wagon.http.readTimeout=300000"
